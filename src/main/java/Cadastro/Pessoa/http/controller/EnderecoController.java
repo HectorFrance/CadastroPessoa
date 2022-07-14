@@ -1,0 +1,59 @@
+package Cadastro.Pessoa.http.controller;
+
+import Cadastro.Pessoa.entity.Endereco;
+import Cadastro.Pessoa.service.EnderecoService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/endereco")
+public class EnderecoController {
+
+    @Autowired
+    private EnderecoService enderecoService;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Endereco salvar(@RequestBody Endereco endereco) {return enderecoService.salvar(endereco);}
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<Endereco> listaEnderecos(){
+        return enderecoService.listarEnderecos();
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public  Endereco buscarEnderecoPorId(@PathVariable("id") long id){
+        return enderecoService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereco não encontrado"));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removerEndereco(@PathVariable("id") long id){
+        enderecoService.buscarPorId(id).map(endereco -> {
+            enderecoService.removerPorId(endereco.getId());
+            return Void.TYPE;
+        }).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereco não encontrado"));
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizarEndereco(@PathVariable long id, @RequestBody Endereco endereco){
+
+        enderecoService.buscarPorId(id).map(enderecoBase ->{
+            modelMapper.map(endereco,enderecoBase);
+            enderecoService.salvar(enderecoBase);
+            return Void.TYPE;
+        }).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Endereco não Encontrado"));
+    }
+}
