@@ -1,5 +1,6 @@
 package Cadastro.Pessoa.http.controller;
 
+import Cadastro.Pessoa.DTO.EnderecoDTO;
 import Cadastro.Pessoa.entity.Endereco;
 import Cadastro.Pessoa.service.EnderecoService;
 import org.modelmapper.ModelMapper;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,15 +28,22 @@ public class EnderecoController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Endereco> listaEnderecos(){
-        return enderecoService.listarEnderecos();
+    public List<EnderecoDTO> listaEnderecos(){
+        List<Endereco> listaE =  enderecoService.listarEnderecos();
+        List<EnderecoDTO> listaEnderecoDTOS = new ArrayList<EnderecoDTO>();
+        for(Endereco e: listaE){
+            EnderecoDTO enderecoDTO = new EnderecoDTO(e);
+            listaEnderecoDTOS.add(enderecoDTO);
+        }
+        return listaEnderecoDTOS;
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public  Endereco buscarEnderecoPorId(@PathVariable("id") long id){
-        return enderecoService.buscarPorId(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereco não encontrado"));
+    public  EnderecoDTO buscarEnderecoPorId(@PathVariable("id") long id){
+        EnderecoDTO enderecoDTO = new EnderecoDTO(enderecoService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereco não encontrado")));
+        return enderecoDTO;
     }
 
     @DeleteMapping("/{id}")

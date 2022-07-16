@@ -1,5 +1,6 @@
 package Cadastro.Pessoa.http.controller;
 
+import Cadastro.Pessoa.DTO.PessoaDTO;
 import Cadastro.Pessoa.entity.Pessoa;
 import Cadastro.Pessoa.service.PessoaService;
 import org.modelmapper.ModelMapper;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,15 +29,25 @@ public class PessoaController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Pessoa> listaPessoas(){
-        return pessoaService.listaPessoas();
+    public List<PessoaDTO> listaPessoas(){
+        List<PessoaDTO> listaPessoas = new ArrayList<PessoaDTO>();
+        List<Pessoa> lista = pessoaService.listaPessoas();
+
+        for (Pessoa p : lista){
+            PessoaDTO pessoaDTO = new PessoaDTO(p);
+            listaPessoas.add(pessoaDTO);
+        }
+
+        return listaPessoas;
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Pessoa buscarPessoaPorId(@PathVariable("id") long id){
-        return pessoaService.buscarPorId(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Pessoa não encontrada"));
+    public PessoaDTO buscarPessoaPorId(@PathVariable("id") long id){
+        PessoaDTO pessoaDTO = new PessoaDTO(pessoaService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Pessoa não encontrada")));
+
+        return pessoaDTO;
     }
 
     @DeleteMapping("/{id}")
