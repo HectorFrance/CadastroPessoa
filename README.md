@@ -8,7 +8,7 @@ Usando Spring boot, crie uma API simples para gerenciar Pessoas. Esta API deve p
 </h4>
 <br>
 Funcionalidade, Confiabilidade, Usabilidade, Eficiência, Manutenibilidade, Portabilidade
-<br
+<br>
 <h3>Questão 2:</h3>
 <br>
 <h4>Em qual etapa da implementação você considera a qualidade de software?</h4>
